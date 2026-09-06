@@ -20,36 +20,28 @@
     </header>
 
 
-    <!-- =========================
-         المعلومات الشخصية
-    ========================== -->
-
     <section class="admin-card">
 
-        <h2>👤 المعلومات الشخصية</h2>
+        <h2>المعلومات الشخصية</h2>
 
-        <input
-            id="name"
-            placeholder="الاسم الكامل"
-        >
+        <input id="name" placeholder="الاسم الكامل">
 
-        <input
-            id="jobTitle"
-            placeholder="المسمى الوظيفي"
-        >
+        <input id="jobTitle" placeholder="المسمى الوظيفي">
 
         <textarea
             id="about"
             placeholder="نبذة مختصرة عن الشخص"
         ></textarea>
 
-        <label>🖼️ رابط الصورة الشخصية</label>
+
+        <label>رابط الصورة الشخصية</label>
 
         <input
             id="photo"
             type="url"
             placeholder="https://..."
         >
+
 
         <div class="grid">
 
@@ -69,33 +61,31 @@
                 placeholder="المدينة / الدولة"
             >
 
+            <input
+                id="birthDate"
+                placeholder="تاريخ الميلاد"
+            >
+
         </div>
 
-        <input
-            id="linkedin"
-            placeholder="رابط linkedin (اختياري)"
-        >
 
         <input
-            id="github"
-            placeholder="رابط GitHub (اختياري)"
+            id="instagram"
+            placeholder="رابط Instagram"
         >
 
+
         <input
-            id="portfolio"
-            placeholder="رابط الموقع الشخصي (اختياري)"
+            id="telegram"
+            placeholder="رابط Telegram"
         >
 
     </section>
 
 
-    <!-- =========================
-         التعليم
-    ========================== -->
-
     <section class="admin-card">
 
-        <h2>🎓 التعليم</h2>
+        <h2>التعليم</h2>
 
         <div id="educationList">
 
@@ -125,6 +115,7 @@
 
         </div>
 
+
         <button
             type="button"
             class="secondary-button"
@@ -136,13 +127,9 @@
     </section>
 
 
-    <!-- =========================
-         المهارات
-    ========================== -->
-
     <section class="admin-card">
 
-        <h2>🛠️ المهارات</h2>
+        <h2>المهارات</h2>
 
         <textarea
             id="skills"
@@ -152,13 +139,9 @@
     </section>
 
 
-    <!-- =========================
-         الخبرة
-    ========================== -->
-
     <section class="admin-card">
 
-        <h2>💼 الخبرة المهنية</h2>
+        <h2>الخبرة المهنية</h2>
 
         <div id="experienceList">
 
@@ -188,6 +171,7 @@
 
         </div>
 
+
         <button
             type="button"
             class="secondary-button"
@@ -199,13 +183,9 @@
     </section>
 
 
-    <!-- =========================
-         المشاريع
-    ========================== -->
-
     <section class="admin-card">
 
-        <h2>📁 المشاريع</h2>
+        <h2>المشاريع</h2>
 
         <div id="projectList">
 
@@ -230,6 +210,7 @@
 
         </div>
 
+
         <button
             type="button"
             class="secondary-button"
@@ -241,13 +222,9 @@
     </section>
 
 
-    <!-- =========================
-         اللغات
-    ========================== -->
-
     <section class="admin-card">
 
-        <h2>🌐 اللغات</h2>
+        <h2>اللغات</h2>
 
         <textarea
             id="languages"
@@ -257,13 +234,9 @@
     </section>
 
 
-    <!-- =========================
-         الشهادات والإنجازات
-    ========================== -->
-
     <section class="admin-card">
 
-        <h2>🏆 الشهادات والإنجازات</h2>
+        <h2>الشهادات والإنجازات</h2>
 
         <div id="certificateList">
 
@@ -293,6 +266,7 @@
 
         </div>
 
+
         <button
             type="button"
             class="secondary-button"
@@ -304,10 +278,6 @@
     </section>
 
 
-    <!-- =========================
-         إنشاء
-    ========================== -->
-
     <button
         id="createBtn"
         class="main-button"
@@ -318,10 +288,6 @@
 
     <p id="result"></p>
 
-
-    <!-- =========================
-         تسجيل الخروج
-    ========================== -->
 
     <button
         id="logoutBtn"
