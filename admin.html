@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>إدارة CV | CV Platform</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="admin-container">
+
+    <header class="admin-header">
+        <h1>CV Platform</h1>
+        <p>لوحة إدارة السير الذاتية</p>
+    </header>
+
+
+    <!-- =========================
+         المعلومات الشخصية
+    ========================== -->
+
+    <section class="admin-card">
+
+        <h2>👤 المعلومات الشخصية</h2>
+
+        <input
+            id="name"
+            placeholder="الاسم الكامل"
+        >
+
+        <input
+            id="jobTitle"
+            placeholder="المسمى الوظيفي"
+        >
+
+        <textarea
+            id="about"
+            placeholder="نبذة مختصرة عن الشخص"
+        ></textarea>
+
+        <label>🖼️ رابط الصورة الشخصية</label>
+
+        <input
+            id="photo"
+            type="url"
+            placeholder="https://..."
+        >
+
+        <div class="grid">
+
+            <input
+                id="cvEmail"
+                type="email"
+                placeholder="البريد الإلكتروني"
+            >
+
+            <input
+                id="phone"
+                placeholder="رقم الهاتف"
+            >
+
+            <input
+                id="location"
+                placeholder="المدينة / الدولة"
+            >
+
+        </div>
+
+        <input
+            id="linkedin"
+            placeholder="رابط linkedin (اختياري)"
+        >
+
+        <input
+            id="github"
+            placeholder="رابط GitHub (اختياري)"
+        >
+
+        <input
+            id="portfolio"
+            placeholder="رابط الموقع الشخصي (اختياري)"
+        >
+
+    </section>
+
+
+    <!-- =========================
+         التعليم
+    ========================== -->
+
+    <section class="admin-card">
+
+        <h2>🎓 التعليم</h2>
+
+        <div id="educationList">
+
+            <div class="dynamic-item">
+
+                <input
+                    class="education-title"
+                    placeholder="الشهادة / التخصص"
+                >
+
+                <input
+                    class="education-place"
+                    placeholder="المدرسة / الجامعة"
+                >
+
+                <input
+                    class="education-year"
+                    placeholder="سنة التخرج"
+                >
+
+                <textarea
+                    class="education-description"
+                    placeholder="وصف إضافي (اختياري)"
+                ></textarea>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="secondary-button"
+            id="addEducation"
+        >
+            + إضافة تعليم آخر
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         المهارات
+    ========================== -->
+
+    <section class="admin-card">
+
+        <h2>🛠️ المهارات</h2>
+
+        <textarea
+            id="skills"
+            placeholder="HTML, CSS, JavaScript, Python"
+        ></textarea>
+
+    </section>
+
+
+    <!-- =========================
+         الخبرة
+    ========================== -->
+
+    <section class="admin-card">
+
+        <h2>💼 الخبرة المهنية</h2>
+
+        <div id="experienceList">
+
+            <div class="dynamic-item">
+
+                <input
+                    class="experience-job"
+                    placeholder="المسمى الوظيفي"
+                >
+
+                <input
+                    class="experience-company"
+                    placeholder="اسم الشركة"
+                >
+
+                <input
+                    class="experience-period"
+                    placeholder="الفترة"
+                >
+
+                <textarea
+                    class="experience-description"
+                    placeholder="وصف الخبرة"
+                ></textarea>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="secondary-button"
+            id="addExperience"
+        >
+            + إضافة خبرة أخرى
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         المشاريع
+    ========================== -->
+
+    <section class="admin-card">
+
+        <h2>📁 المشاريع</h2>
+
+        <div id="projectList">
+
+            <div class="dynamic-item">
+
+                <input
+                    class="project-name"
+                    placeholder="اسم المشروع"
+                >
+
+                <input
+                    class="project-link"
+                    placeholder="رابط المشروع (اختياري)"
+                >
+
+                <textarea
+                    class="project-description"
+                    placeholder="وصف المشروع"
+                ></textarea>
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="secondary-button"
+            id="addProject"
+        >
+            + إضافة مشروع آخر
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         اللغات
+    ========================== -->
+
+    <section class="admin-card">
+
+        <h2>🌐 اللغات</h2>
+
+        <textarea
+            id="languages"
+            placeholder="العربية - اللغة الأم&#10;الإنجليزية - جيد جدًا"
+        ></textarea>
+
+    </section>
+
+
+    <!-- =========================
+         الشهادات والإنجازات
+    ========================== -->
+
+    <section class="admin-card">
+
+        <h2>🏆 الشهادات والإنجازات</h2>
+
+        <div id="certificateList">
+
+            <div class="dynamic-item">
+
+                <input
+                    class="certificate-name"
+                    placeholder="اسم الشهادة / الإنجاز"
+                >
+
+                <input
+                    class="certificate-issuer"
+                    placeholder="الجهة المانحة"
+                >
+
+                <input
+                    class="certificate-year"
+                    placeholder="السنة"
+                >
+
+                <input
+                    class="certificate-link"
+                    placeholder="رابط الشهادة (اختياري)"
+                >
+
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="secondary-button"
+            id="addCertificate"
+        >
+            + إضافة شهادة أخرى
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         إنشاء
+    ========================== -->
+
+    <button
+        id="createBtn"
+        class="main-button"
+    >
+        إنشاء CV
+    </button>
+
+
+    <p id="result"></p>
+
+
+    <!-- =========================
+         تسجيل الخروج
+    ========================== -->
+
+    <button
+        id="logoutBtn"
+        class="logout"
+    >
+        تسجيل الخروج
+    </button>
+
+</div>
+
+
+<script
+    type="module"
+    src="admin.js"
+></script>
+
+</body>
+
+</html>
