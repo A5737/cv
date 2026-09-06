@@ -193,7 +193,7 @@ document
 
 
 // ==========================================
-// الشهادات
+// الشهادات والإنجازات
 // ==========================================
 
 document
@@ -243,15 +243,11 @@ document
 document.addEventListener("click", (event) => {
 
     if (
-        event.target.classList.contains(
-            "remove-button"
-        )
+        event.target.classList.contains("remove-button")
     ) {
 
         const item =
-            event.target.closest(
-                ".dynamic-item"
-            );
+            event.target.closest(".dynamic-item");
 
         if (item) {
             item.remove();
@@ -510,21 +506,21 @@ document
                         .value
                         .trim(),
 
-                linkedin:
+                birthDate:
                     document
-                        .getElementById("linkedin")
+                        .getElementById("birthDate")
                         .value
                         .trim(),
 
-                github:
+                instagram:
                     document
-                        .getElementById("github")
+                        .getElementById("instagram")
                         .value
                         .trim(),
 
-                portfolio:
+                telegram:
                     document
-                        .getElementById("portfolio")
+                        .getElementById("telegram")
                         .value
                         .trim()
 
@@ -597,7 +593,7 @@ document
 
 
             // ==================================
-            // رابط GitHub Pages الصحيح
+            // إنشاء رابط الـCV
             // ==================================
 
             const basePath =
@@ -615,7 +611,7 @@ document
             result.innerHTML = `
 
                 <strong>
-                    تم إنشاء الـCV بنجاح ✅
+                    تم إنشاء الـCV بنجاح
                 </strong>
 
                 <br><br>
@@ -648,7 +644,7 @@ document
                     id="copyLinkBtn"
                     type="button"
                 >
-                    نسخ الرابط 📋
+                    نسخ الرابط
                 </button>
 
             `;
@@ -670,7 +666,7 @@ document
                                     "copyLinkBtn"
                                 )
                                 .textContent =
-                                "تم نسخ الرابط ✅";
+                                "تم نسخ الرابط";
 
                         } catch (error) {
 
@@ -687,7 +683,7 @@ document
             console.error(error);
 
             result.textContent =
-                "حدث خطأ أثناء إنشاء الـCV ❌";
+                "حدث خطأ أثناء إنشاء الـCV.";
 
         }
 
