@@ -69,11 +69,9 @@ a {
 .profile-placeholder {
     background: #fff;
     color: #20242a;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     font-size: 42px;
     font-weight: bold;
 }
@@ -117,31 +115,24 @@ a {
 }
 
 .side-section {
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 }
 
 .side-section h3 {
-    margin: 0 0 18px;
+    margin: 0 0 16px;
     padding-bottom: 9px;
-
     font-size: 17px;
-
     border-bottom: 2px solid #20242a;
 }
 
 .contact-item {
     display: flex;
     gap: 10px;
-
     align-items: flex-start;
-
     margin-bottom: 14px;
-
     text-decoration: none;
-
     font-size: 14px;
     line-height: 1.5;
-
     word-break: break-word;
 }
 
@@ -162,13 +153,9 @@ a {
 
 .skill {
     background: #fff;
-
     border: 1px solid #ddd;
-
     padding: 7px 11px;
-
     border-radius: 20px;
-
     font-size: 13px;
 }
 
@@ -196,26 +183,20 @@ a {
 }
 
 .cv-section {
-    margin-bottom: 38px;
+    margin-bottom: 32px;
 }
 
 .cv-section h2 {
-    margin: 0 0 20px;
-
+    margin: 0 0 18px;
     padding-bottom: 10px;
-
     font-size: 22px;
-
     border-bottom: 2px solid #20242a;
 }
 
 .cv-section p {
     margin: 0;
-
     color: #555;
-
-    line-height: 1.9;
-
+    line-height: 1.8;
     white-space: pre-line;
 }
 
@@ -226,25 +207,19 @@ a {
 
 .timeline-item {
     position: relative;
-
-    margin-bottom: 25px;
-
+    margin-bottom: 22px;
     padding-right: 20px;
-
     border-right: 3px solid #20242a;
 }
 
 .timeline-item h3 {
-    margin: 0 0 8px;
-
+    margin: 0 0 7px;
     font-size: 18px;
 }
 
 .meta {
-    margin-bottom: 10px;
-
+    margin-bottom: 8px;
     color: #777;
-
     font-size: 14px;
 }
 
@@ -254,14 +229,10 @@ a {
 ========================= */
 
 .project-card {
-    margin-bottom: 15px;
-
-    padding: 20px;
-
+    margin-bottom: 14px;
+    padding: 18px;
     border: 1px solid #e2e2e2;
-
     border-radius: 14px;
-
     background: #fff;
 }
 
@@ -272,11 +243,8 @@ a {
 .project-card a,
 .timeline-item a {
     display: inline-block;
-
-    margin-top: 10px;
-
+    margin-top: 8px;
     font-weight: bold;
-
     text-decoration: none;
 }
 
@@ -291,27 +259,19 @@ a {
 ========================= */
 
 .cv-actions {
-    margin-top: 35px;
-
-    padding-top: 25px;
-
+    margin-top: 30px;
+    padding-top: 20px;
     border-top: 1px solid #ddd;
-
     text-align: center;
 }
 
 .print-button {
     border: none;
-
     background: #20242a;
     color: #fff;
-
     padding: 14px 25px;
-
     border-radius: 10px;
-
     font-size: 16px;
-
     cursor: pointer;
 }
 
@@ -328,17 +288,11 @@ a {
 .message-box {
     width: 90%;
     max-width: 650px;
-
     margin: 100px auto;
-
     padding: 40px;
-
     background: #fff;
-
     border-radius: 18px;
-
     text-align: center;
-
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
 }
 
@@ -354,80 +308,60 @@ a {
 .admin-container {
     width: 100%;
     max-width: 850px;
-
     margin: auto;
-
     padding: 25px;
 }
 
 .admin-header {
     margin-bottom: 25px;
-
     text-align: center;
 }
 
 .admin-card {
     margin-bottom: 20px;
-
     padding: 25px;
-
     background: #fff;
-
     border-radius: 16px;
-
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
 }
 
 .admin-card h2 {
     margin-top: 0;
-
     margin-bottom: 20px;
 }
 
 .admin-card span {
     color: #888;
-
     font-size: 14px;
 }
 
 .admin-card label {
     display: block;
-
     margin-top: 15px;
     margin-bottom: 8px;
-
     font-weight: bold;
 }
 
 input,
 textarea {
     display: block;
-
     width: 100%;
-
     margin: 10px 0;
-
     padding: 13px;
-
     border: 1px solid #ddd;
-
     border-radius: 9px;
-
     background: #fff;
-
     font-size: 15px;
 }
 
 textarea {
     min-height: 100px;
-
     resize: vertical;
 }
 
 input:focus,
 textarea:focus {
     outline: none;
-
     border-color: #20242a;
 }
 
@@ -438,29 +372,19 @@ textarea:focus {
 
 .dynamic-item {
     position: relative;
-
     margin-bottom: 15px;
-
     padding: 18px;
-
     border: 1px solid #ddd;
-
     border-radius: 12px;
-
     background: #fafafa;
 }
 
 .secondary-button {
     border: none;
-
     padding: 11px 16px;
-
     border-radius: 9px;
-
     background: #eee;
-
     color: #20242a;
-
     cursor: pointer;
 }
 
@@ -470,19 +394,12 @@ textarea:focus {
 
 .remove-button {
     float: left;
-
     margin-bottom: 10px;
-
     border: none;
-
     padding: 7px 12px;
-
     border-radius: 7px;
-
     background: #eee;
-
     color: #555;
-
     cursor: pointer;
 }
 
@@ -497,9 +414,7 @@ textarea:focus {
 
 .grid {
     display: grid;
-
     grid-template-columns: repeat(2, 1fr);
-
     gap: 10px;
 }
 
@@ -510,18 +425,12 @@ textarea:focus {
 
 .main-button {
     width: 100%;
-
     border: none;
-
     padding: 16px;
-
     border-radius: 12px;
-
     background: #20242a;
     color: #fff;
-
     font-size: 17px;
-
     cursor: pointer;
 }
 
@@ -536,13 +445,9 @@ textarea:focus {
 
 #result {
     margin-top: 20px;
-
     padding: 15px;
-
     background: #fff;
-
     border-radius: 10px;
-
     word-break: break-word;
 }
 
@@ -557,17 +462,11 @@ textarea:focus {
 
 .logout {
     width: 100%;
-
     margin-top: 15px;
-
     padding: 14px;
-
     border: none;
-
     border-radius: 12px;
-
     background: #eee;
-
     cursor: pointer;
 }
 
@@ -579,27 +478,19 @@ textarea:focus {
 .login-container {
     width: 100%;
     min-height: 100vh;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     padding: 20px;
 }
 
 .login-card {
     width: 100%;
     max-width: 420px;
-
     padding: 35px;
-
     background: #fff;
-
     border-radius: 20px;
-
     text-align: center;
-
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
 }
 
@@ -612,13 +503,11 @@ textarea:focus {
 
     .cv-wrapper {
         margin: 0;
-
         border-radius: 0;
     }
 
     .cv-header {
         padding: 30px 20px;
-
         gap: 15px;
     }
 
@@ -655,7 +544,6 @@ textarea:focus {
     .grid {
         grid-template-columns: 1fr;
     }
-
 }
 
 
@@ -665,29 +553,78 @@ textarea:focus {
 
 @media print {
 
+    html,
     body {
+        width: 210mm;
         background: #fff;
     }
 
-    .cv-wrapper {
+    body {
         margin: 0;
+        padding: 0;
+    }
 
+    .cv-wrapper {
+        width: 210mm;
         max-width: none;
-
+        margin: 0;
         border-radius: 0;
-
         box-shadow: none;
+        overflow: visible;
+    }
+
+    .cv-header {
+        padding: 22px 28px;
+    }
+
+    .profile-photo,
+    .profile-placeholder {
+        width: 85px;
+        height: 85px;
+    }
+
+    .profile-info h1 {
+        font-size: 30px;
+    }
+
+    .profile-info h2 {
+        font-size: 15px;
+        margin-top: 6px;
+    }
+
+    .cv-sidebar {
+        padding: 22px 20px;
+    }
+
+    .cv-main {
+        padding: 25px;
+    }
+
+    .side-section {
+        margin-bottom: 22px;
+    }
+
+    .cv-section {
+        margin-bottom: 24px;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .timeline-item {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .project-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
     }
 
     .cv-actions {
         display: none;
     }
 
-    .cv-header {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-    }
-
+    .cv-header,
     .cv-sidebar {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
@@ -697,5 +634,4 @@ textarea:focus {
         size: A4;
         margin: 0;
     }
-
 }
