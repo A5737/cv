@@ -7,6 +7,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 
+// ==========================================
+// Firebase
+// ==========================================
+
 const firebaseConfig = {
     apiKey: "AIzaSyDJKre7sGcKRSD-VyULGyBLVfc98B3lj3Y",
     authDomain: "cv-proj-419e6.firebaseapp.com",
@@ -16,78 +20,133 @@ const firebaseConfig = {
     appId: "1:1043294028225:web:9f36e80b18d9127a3aef40"
 };
 
-
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
+
+
+// ==========================================
+// عناصر الصفحة
+// ==========================================
 
 const appElement = document.getElementById("app");
 
 
-function escapeHtml(value) {
-    return String(value || "")
+// ==========================================
+// حماية النصوص من HTML
+// ==========================================
+
+function escapeHTML(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+
 }
 
 
-function safeUrl(value) {
+// ==========================================
+// رابط آمن
+// ==========================================
 
-    if (!value) return "";
+function safeURL(url) {
+
+    if (!url) {
+        return "";
+    }
 
     try {
 
-        const url = new URL(value);
+        const parsed = new URL(url);
 
         if (
-            url.protocol === "http:" ||
-            url.protocol === "https:"
+            parsed.protocol === "http:" ||
+            parsed.protocol === "https:"
         ) {
-            return escapeHtml(value);
+            return parsed.href;
         }
 
-    } catch (error) {}
+    } catch (error) {
+        return "";
+    }
 
     return "";
+
 }
 
 
-const params =
-    new URLSearchParams(window.location.search);
+// ==========================================
+// قراءة ID من الرابط
+// ==========================================
+
+const params = new URLSearchParams(
+    window.location.search
+);
 
 const cvId = params.get("id");
 
 
+// ==========================================
+// إذا لا يوجد ID
+// ==========================================
+
+if (!cvId) {
+
+    appElement.innerHTML = `
+        <div class="message-box">
+            <h1>السيرة الذاتية غير موجودة</h1>
+            <p>
+                رابط الـCV غير صحيح أو لا يحتوي على ID.
+            </p>
+        </div>
+    `;
+
+} else {
+
+    loadCV();
+
+}
+
+
+// ==========================================
+// تحميل CV
+// ==========================================
+
 async function loadCV() {
 
-    if (!cvId) {
-
-        appElement.innerHTML = `
-            <div class="message-box">
-                <h1>السيرة الذاتية غير محددة</h1>
-                <p>الرابط غير صحيح.</p>
-            </div>
-        `;
-
-        return;
-    }
-
+    appElement.innerHTML = `
+        <div class="loading">
+            جاري تحميل السيرة الذاتية...
+        </div>
+    `;
 
     try {
 
-        const cvRef = doc(db, "cvs", cvId);
+        const cvRef = doc(
+            db,
+            "cvs",
+            cvId
+        );
 
-        const cvSnap = await getDoc(cvRef);
+        const cvSnapshot =
+            await getDoc(cvRef);
 
 
-        if (!cvSnap.exists()) {
+        if (!cvSnapshot.exists()) {
 
             appElement.innerHTML = `
                 <div class="message-box">
-                    <h1>CV غير موجود ❌</h1>
-                    <p>تأكد من أن الرابط صحيح.</p>
+                    <h1>السيرة الذاتية غير موجودة</h1>
+                    <p>
+                        لم يتم العثور على هذه السيرة الذاتية.
+                    </p>
                 </div>
             `;
 
@@ -95,591 +154,23 @@ async function loadCV() {
         }
 
 
-        const cv = cvSnap.data();
+        const data =
+            cvSnapshot.data();
 
-        const personal = cv.personal || {};
 
+        renderCV(data);
 
-        const education = Array.isArray(cv.education)
-            ? cv.education
-            : [];
-
-
-        const experience = Array.isArray(cv.experience)
-            ? cv.experience
-            : [];
-
-
-        const projects = Array.isArray(cv.projects)
-            ? cv.projects
-            : [];
-
-
-        const skills = Array.isArray(cv.skills)
-            ? cv.skills
-            : [];
-
-
-        const languages = Array.isArray(cv.languages)
-            ? cv.languages
-            : [];
-
-
-        const certificates = Array.isArray(cv.certificates)
-            ? cv.certificates
-            : [];
-
-
-        document.title =
-            `${personal.name || "CV"} - السيرة الذاتية`;
-
-
-        // الصورة
-
-        const photo = safeUrl(personal.photo);
-
-        const photoHTML = photo
-            ? `
-                <img
-                    src="${photo}"
-                    class="profile-photo"
-                    alt="الصورة الشخصية"
-                >
-            `
-            : `
-                <div class="profile-placeholder">
-                    ${personal.name
-                        ? escapeHtml(personal.name.charAt(0))
-                        : "CV"
-                    }
-                </div>
-            `;
-
-
-        // المهارات
-
-        const skillsHTML = skills.length
-            ? skills.map(skill => `
-                <span class="skill">
-                    ${escapeHtml(skill)}
-                </span>
-            `).join("")
-            : "<p>غير متوفر</p>";
-
-
-        // اللغات
-
-        const languagesHTML = languages.length
-            ? languages.map(language => `
-                <li>
-                    ${escapeHtml(language)}
-                </li>
-            `).join("")
-            : "<li>غير متوفر</li>";
-
-
-        // التعليم
-
-        const educationHTML = education.length
-            ? `
-                <section class="cv-section">
-
-                    <h2>🎓 التعليم</h2>
-
-                    ${education.map(item => `
-
-                        <div class="timeline-item">
-
-                            ${
-                                item.title
-                                    ? `<h3>${escapeHtml(item.title)}</h3>`
-                                    : ""
-                            }
-
-                            ${
-                                item.place || item.year
-                                    ? `
-                                        <div class="meta">
-                                            ${escapeHtml(item.place || "")}
-
-                                            ${
-                                                item.year
-                                                    ? ` • ${escapeHtml(item.year)}`
-                                                    : ""
-                                            }
-                                        </div>
-                                    `
-                                    : ""
-                            }
-
-                            ${
-                                item.description
-                                    ? `<p>${escapeHtml(item.description)}</p>`
-                                    : ""
-                            }
-
-                        </div>
-
-                    `).join("")}
-
-                </section>
-            `
-            : "";
-
-
-        // الخبرة
-
-        const experienceHTML = experience.length
-            ? `
-                <section class="cv-section">
-
-                    <h2>💼 الخبرة المهنية</h2>
-
-                    ${experience.map(item => `
-
-                        <div class="timeline-item">
-
-                            ${
-                                item.job
-                                    ? `<h3>${escapeHtml(item.job)}</h3>`
-                                    : ""
-                            }
-
-                            ${
-                                item.company || item.period
-                                    ? `
-                                        <div class="meta">
-
-                                            ${escapeHtml(item.company || "")}
-
-                                            ${
-                                                item.period
-                                                    ? ` • ${escapeHtml(item.period)}`
-                                                    : ""
-                                            }
-
-                                        </div>
-                                    `
-                                    : ""
-                            }
-
-                            ${
-                                item.description
-                                    ? `<p>${escapeHtml(item.description)}</p>`
-                                    : ""
-                            }
-
-                        </div>
-
-                    `).join("")}
-
-                </section>
-            `
-            : "";
-
-
-        // المشاريع
-
-        const projectsHTML = projects.length
-            ? `
-                <section class="cv-section">
-
-                    <h2>📁 المشاريع</h2>
-
-                    ${projects.map(item => {
-
-                        const link = safeUrl(item.link);
-
-                        return `
-
-                            <div class="project-card">
-
-                                ${
-                                    item.name
-                                        ? `<h3>${escapeHtml(item.name)}</h3>`
-                                        : ""
-                                }
-
-                                ${
-                                    item.description
-                                        ? `<p>${escapeHtml(item.description)}</p>`
-                                        : ""
-                                }
-
-                                ${
-                                    link
-                                        ? `
-                                            <a
-                                                href="${link}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
-                                                عرض المشروع ↗
-                                            </a>
-                                        `
-                                        : ""
-                                }
-
-                            </div>
-
-                        `;
-
-                    }).join("")}
-
-                </section>
-            `
-            : "";
-
-
-        // الشهادات
-
-        const certificatesHTML = certificates.length
-            ? `
-                <section class="cv-section">
-
-                    <h2>🏆 الشهادات والإنجازات</h2>
-
-                    ${certificates.map(item => {
-
-                        const link = safeUrl(item.link);
-
-                        return `
-
-                            <div class="timeline-item">
-
-                                ${
-                                    item.name
-                                        ? `<h3>${escapeHtml(item.name)}</h3>`
-                                        : ""
-                                }
-
-                                ${
-                                    item.issuer || item.year
-                                        ? `
-                                            <div class="meta">
-
-                                                ${escapeHtml(item.issuer || "")}
-
-                                                ${
-                                                    item.year
-                                                        ? ` • ${escapeHtml(item.year)}`
-                                                        : ""
-                                                }
-
-                                            </div>
-                                        `
-                                        : ""
-                                }
-
-                                ${
-                                    link
-                                        ? `
-                                            <a
-                                                href="${link}"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
-                                                عرض الشهادة ↗
-                                            </a>
-                                        `
-                                        : ""
-                                }
-
-                            </div>
-
-                        `;
-
-                    }).join("")}
-
-                </section>
-            `
-            : "";
-
-
-        // معلومات التواصل
-
-        let contactHTML = "";
-
-
-        if (personal.email) {
-
-            contactHTML += `
-                <a
-                    href="mailto:${escapeHtml(personal.email)}"
-                    class="contact-item"
-                >
-                    ✉️
-                    <span>
-                        ${escapeHtml(personal.email)}
-                    </span>
-                </a>
-            `;
-
-        }
-
-
-        if (personal.phone) {
-
-            contactHTML += `
-                <a
-                    href="tel:${escapeHtml(personal.phone)}"
-                    class="contact-item"
-                >
-                    📞
-                    <span>
-                        ${escapeHtml(personal.phone)}
-                    </span>
-                </a>
-            `;
-
-        }
-
-
-        if (personal.location) {
-
-            contactHTML += `
-                <div class="contact-item">
-                    📍
-                    <span>
-                        ${escapeHtml(personal.location)}
-                    </span>
-                </div>
-            `;
-
-        }
-
-
-        if (personal.linkedin) {
-
-            const url = safeUrl(personal.linkedin);
-
-            if (url) {
-
-                contactHTML += `
-                    <a
-                        href="${url}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="contact-item"
-                    >
-                        in
-                        <span>LinkedIn</span>
-                    </a>
-                `;
-
-            }
-
-        }
-
-
-        if (personal.github) {
-
-            const url = safeUrl(personal.github);
-
-            if (url) {
-
-                contactHTML += `
-                    <a
-                        href="${url}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="contact-item"
-                    >
-                        ◉
-                        <span>GitHub</span>
-                    </a>
-                `;
-
-            }
-
-        }
-
-
-        if (personal.portfolio) {
-
-            const url = safeUrl(personal.portfolio);
-
-            if (url) {
-
-                contactHTML += `
-                    <a
-                        href="${url}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="contact-item"
-                    >
-                        🌐
-                        <span>الموقع الشخصي</span>
-                    </a>
-                `;
-
-            }
-
-        }
-
-
-        // عرض CV
-
-        appElement.innerHTML = `
-
-            <div class="cv-wrapper">
-
-
-                <header class="cv-header">
-
-                    ${photoHTML}
-
-                    <div class="profile-info">
-
-                        <h1>
-                            ${escapeHtml(
-                                personal.name || "بدون اسم"
-                            )}
-                        </h1>
-
-                        ${
-                            personal.jobTitle
-                                ? `
-                                    <h2>
-                                        ${escapeHtml(
-                                            personal.jobTitle
-                                        )}
-                                    </h2>
-                                `
-                                : ""
-                        }
-
-                    </div>
-
-                </header>
-
-
-                <div class="cv-content">
-
-
-                    <aside class="cv-sidebar">
-
-
-                        ${
-                            contactHTML
-                                ? `
-                                    <section class="side-section">
-
-                                        <h3>
-                                            معلومات التواصل
-                                        </h3>
-
-                                        ${contactHTML}
-
-                                    </section>
-                                `
-                                : ""
-                        }
-
-
-                        <section class="side-section">
-
-                            <h3>
-                                المهارات
-                            </h3>
-
-                            <div class="skills">
-                                ${skillsHTML}
-                            </div>
-
-                        </section>
-
-
-                        ${
-                            languages.length
-                                ? `
-                                    <section class="side-section">
-
-                                        <h3>
-                                            اللغات
-                                        </h3>
-
-                                        <ul class="languages">
-                                            ${languagesHTML}
-                                        </ul>
-
-                                    </section>
-                                `
-                                : ""
-                        }
-
-
-                    </aside>
-
-
-                    <section class="cv-main">
-
-
-                        ${
-                            personal.about
-                                ? `
-                                    <section class="cv-section">
-
-                                        <h2>
-                                            نبذة عني
-                                        </h2>
-
-                                        <p>
-                                            ${escapeHtml(
-                                                personal.about
-                                            )}
-                                        </p>
-
-                                    </section>
-                                `
-                                : ""
-                        }
-
-
-                        ${experienceHTML}
-
-                        ${educationHTML}
-
-                        ${projectsHTML}
-
-                        ${certificatesHTML}
-
-
-                        <div class="cv-actions">
-
-                            <button
-                                onclick="window.print()"
-                                class="print-button"
-                            >
-                                📄 حفظ / طباعة PDF
-                            </button>
-
-                        </div>
-
-
-                    </section>
-
-                </div>
-
-            </div>
-
-        `;
 
     } catch (error) {
 
-        console.error("CV ERROR:", error);
+        console.error(error);
 
         appElement.innerHTML = `
             <div class="message-box">
-
-                <h1>
-                    حدث خطأ ❌
-                </h1>
-
+                <h1>حدث خطأ</h1>
                 <p>
                     تعذر تحميل السيرة الذاتية.
                 </p>
-
             </div>
         `;
 
@@ -688,4 +179,708 @@ async function loadCV() {
 }
 
 
-loadCV();
+// ==========================================
+// عرض CV
+// ==========================================
+
+function renderCV(data) {
+
+    const personal =
+        data.personal || {};
+
+    const education =
+        Array.isArray(data.education)
+            ? data.education
+            : [];
+
+    const skills =
+        Array.isArray(data.skills)
+            ? data.skills
+            : [];
+
+    const experience =
+        Array.isArray(data.experience)
+            ? data.experience
+            : [];
+
+    const projects =
+        Array.isArray(data.projects)
+            ? data.projects
+            : [];
+
+    const languages =
+        Array.isArray(data.languages)
+            ? data.languages
+            : [];
+
+    const certificates =
+        Array.isArray(data.certificates)
+            ? data.certificates
+            : [];
+
+
+    const photoURL =
+        safeURL(personal.photo);
+
+
+    let html = `
+
+        <div class="cv-wrapper">
+
+            <header class="cv-header">
+
+    `;
+
+
+    // ======================================
+    // الصورة
+    // ======================================
+
+    if (photoURL) {
+
+        html += `
+
+                <img
+                    class="profile-photo"
+                    src="${escapeHTML(photoURL)}"
+                    alt="الصورة الشخصية"
+                >
+
+        `;
+
+    } else {
+
+        html += `
+
+                <div class="profile-placeholder">
+                    ${escapeHTML(
+                        personal.name
+                            ? personal.name.charAt(0)
+                            : "CV"
+                    )}
+                </div>
+
+        `;
+
+    }
+
+
+    html += `
+
+                <div class="profile-info">
+
+                    <h1>
+                        ${escapeHTML(
+                            personal.name || ""
+                        )}
+                    </h1>
+
+                    ${
+                        personal.jobTitle
+                            ? `
+                                <h2>
+                                    ${escapeHTML(
+                                        personal.jobTitle
+                                    )}
+                                </h2>
+                            `
+                            : ""
+                    }
+
+                </div>
+
+            </header>
+
+            <div class="cv-content">
+
+                <aside class="cv-sidebar">
+
+    `;
+
+
+    // ======================================
+    // معلومات الاتصال
+    // ======================================
+
+    if (
+        personal.email ||
+        personal.phone ||
+        personal.location ||
+        personal.birthDate ||
+        personal.instagram ||
+        personal.telegram
+    ) {
+
+        html += `
+
+                    <section class="side-section">
+
+                        <h3>
+                            معلومات التواصل
+                        </h3>
+
+        `;
+
+
+        if (personal.phone) {
+
+            html += `
+
+                        <a
+                            class="contact-item"
+                            href="tel:${escapeHTML(
+                                personal.phone
+                            )}"
+                        >
+                            <span>📞</span>
+                            <span>
+                                ${escapeHTML(
+                                    personal.phone
+                                )}
+                            </span>
+                        </a>
+
+            `;
+
+        }
+
+
+        if (personal.email) {
+
+            html += `
+
+                        <a
+                            class="contact-item"
+                            href="mailto:${escapeHTML(
+                                personal.email
+                            )}"
+                        >
+                            <span>✉️</span>
+                            <span>
+                                ${escapeHTML(
+                                    personal.email
+                                )}
+                            </span>
+                        </a>
+
+            `;
+
+        }
+
+
+        if (personal.location) {
+
+            html += `
+
+                        <div class="contact-item">
+                            <span>
+                                ${escapeHTML(
+                                    personal.location
+                                )}
+                            </span>
+                        </div>
+
+            `;
+
+        }
+
+
+        if (personal.birthDate) {
+
+            html += `
+
+                        <div class="contact-item">
+                            <span>
+                                تاريخ الميلاد:
+                                ${escapeHTML(
+                                    personal.birthDate
+                                )}
+                            </span>
+                        </div>
+
+            `;
+
+        }
+
+
+        const instagramURL =
+            safeURL(personal.instagram);
+
+        if (instagramURL) {
+
+            html += `
+
+                        <a
+                            class="contact-item"
+                            href="${escapeHTML(
+                                instagramURL
+                            )}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <span>
+                                Instagram
+                            </span>
+                        </a>
+
+            `;
+
+        }
+
+
+        const telegramURL =
+            safeURL(personal.telegram);
+
+        if (telegramURL) {
+
+            html += `
+
+                        <a
+                            class="contact-item"
+                            href="${escapeHTML(
+                                telegramURL
+                            )}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <span>
+                                Telegram
+                            </span>
+                        </a>
+
+            `;
+
+        }
+
+
+        html += `
+
+                    </section>
+
+        `;
+
+    }
+
+
+    // ======================================
+    // المهارات
+    // ======================================
+
+    if (skills.length > 0) {
+
+        html += `
+
+                    <section class="side-section">
+
+                        <h3>
+                            المهارات
+                        </h3>
+
+                        <div class="skills">
+
+        `;
+
+
+        skills.forEach(skill => {
+
+            html += `
+
+                            <span class="skill">
+                                ${escapeHTML(skill)}
+                            </span>
+
+            `;
+
+        });
+
+
+        html += `
+
+                        </div>
+
+                    </section>
+
+        `;
+
+    }
+
+
+    // ======================================
+    // اللغات
+    // ======================================
+
+    if (languages.length > 0) {
+
+        html += `
+
+                    <section class="side-section">
+
+                        <h3>
+                            اللغات
+                        </h3>
+
+                        <ul class="languages">
+
+        `;
+
+
+        languages.forEach(language => {
+
+            html += `
+
+                            <li>
+                                ${escapeHTML(language)}
+                            </li>
+
+            `;
+
+        });
+
+
+        html += `
+
+                        </ul>
+
+                    </section>
+
+        `;
+
+    }
+
+
+    html += `
+
+                </aside>
+
+                <main class="cv-main">
+
+    `;
+
+
+    // ======================================
+    // نبذة
+    // ======================================
+
+    if (personal.about) {
+
+        html += `
+
+                    <section class="cv-section">
+
+                        <h2>
+                            نبذة عني
+                        </h2>
+
+                        <p>
+                            ${escapeHTML(
+                                personal.about
+                            )}
+                        </p>
+
+                    </section>
+
+        `;
+
+    }
+
+
+    // ======================================
+    // التعليم
+    // ======================================
+
+    if (education.length > 0) {
+
+        html += `
+
+                    <section class="cv-section">
+
+                        <h2>
+                            التعليم
+                        </h2>
+
+        `;
+
+
+        education.forEach(item => {
+
+            html += `
+
+                        <div class="timeline-item">
+
+                            ${
+                                item.title
+                                    ? `
+                                        <h3>
+                                            ${escapeHTML(
+                                                item.title
+                                            )}
+                                        </h3>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                item.place ||
+                                item.year
+                                    ? `
+                                        <div class="meta">
+                                            ${escapeHTML(
+                                                item.place || ""
+                                            )}
+                                            ${
+                                                item.place &&
+                                                item.year
+                                                    ? " — "
+                                                    : ""
+                                            }
+                                            ${escapeHTML(
+                                                item.year || ""
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                item.description
+                                    ? `
+                                        <p>
+                                            ${escapeHTML(
+                                                item.description
+                                            )}
+                                        </p>
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+            `;
+
+        });
+
+
+        html += `
+
+                    </section>
+
+        `;
+
+    }
+
+
+    // ======================================
+    // الخبرة
+    // ======================================
+
+    if (experience.length > 0) {
+
+        html += `
+
+                    <section class="cv-section">
+
+                        <h2>
+                            الخبرة المهنية
+                        </h2>
+
+        `;
+
+
+        experience.forEach(item => {
+
+            html += `
+
+                        <div class="timeline-item">
+
+                            ${
+                                item.job
+                                    ? `
+                                        <h3>
+                                            ${escapeHTML(
+                                                item.job
+                                            )}
+                                        </h3>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                item.company ||
+                                item.period
+                                    ? `
+                                        <div class="meta">
+                                            ${escapeHTML(
+                                                item.company || ""
+                                            )}
+                                            ${
+                                                item.company &&
+                                                item.period
+                                                    ? " — "
+                                                    : ""
+                                            }
+                                            ${escapeHTML(
+                                                item.period || ""
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                item.description
+                                    ? `
+                                        <p>
+                                            ${escapeHTML(
+                                                item.description
+                                            )}
+                                        </p>
+                                    `
+                                    : ""
+                            }
+
+                        </div>
+
+            `;
+
+        });
+
+
+        html += `
+
+                    </section>
+
+        `;
+
+    }
+
+
+    // ======================================
+    // المشاريع
+    // ======================================
+
+    if (projects.length > 0) {
+
+        html += `
+
+                    <section class="cv-section">
+
+                        <h2>
+                            المشاريع
+                        </h2>
+
+        `;
+
+
+        projects.forEach(item => {
+
+            html += `
+
+                        <div class="project-card">
+
+                            ${
+                                item.name
+                                    ? `
+                                        <h3>
+                                            ${escapeHTML(
+                                                item.name
+                                            )}
+                                        </h3>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                item.description
+                                    ? `
+                                        <p>
+                                            ${escapeHTML(
+                                                item.description
+                                            )}
+                                        </p>
+                                    `
+                                    : ""
+                            }
+
+            `;
+
+
+            const projectURL =
+                safeURL(item.link);
+
+
+            if (projectURL) {
+
+                html += `
+
+                            <a
+                                href="${escapeHTML(
+                                    projectURL
+                                )}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                عرض المشروع
+                            </a>
+
+                `;
+
+            }
+
+
+            html += `
+
+                        </div>
+
+            `;
+
+        });
+
+
+        html += `
+
+                    </section>
+
+        `;
+
+    }
+
+
+    // ======================================
+    // الشهادات والإنجازات
+    // ======================================
+
+    if (certificates.length > 0) {
+
+        html += `
+
+                    <section class="cv-section">
+
+                        <h2>
+                            الشهادات والإنجازات
+                        </h2>
+
+        `;
+
+
+        certificates.forEach(item => {
+
+            html += `
+
+                        <div class="timeline-item">
+
+                            ${
+                                item.name
+                                    ? `
+                                        <h3>
+                                            ${escapeHTML(
+                                                item.name
+                                            )}
+                                        </h3>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                item.issuer ||
+                                item.year
+                       
