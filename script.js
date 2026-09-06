@@ -67,8 +67,15 @@ async function loadCV() {
 
         appElement.innerHTML = `
             <div class="message-box">
-                <h1>السيرة الذاتية غير محددة</h1>
-                <p>الرابط غير صحيح.</p>
+
+                <h1>
+                    السيرة الذاتية غير محددة
+                </h1>
+
+                <p>
+                    الرابط غير صحيح.
+                </p>
+
             </div>
         `;
 
@@ -78,16 +85,26 @@ async function loadCV() {
 
     try {
 
-        const cvRef = doc(db, "cvs", cvId);
-        const cvSnap = await getDoc(cvRef);
+        const cvRef =
+            doc(db, "cvs", cvId);
+
+        const cvSnap =
+            await getDoc(cvRef);
 
 
         if (!cvSnap.exists()) {
 
             appElement.innerHTML = `
                 <div class="message-box">
-                    <h1>CV غير موجود ❌</h1>
-                    <p>تأكد من أن الرابط صحيح.</p>
+
+                    <h1>
+                        CV غير موجود ❌
+                    </h1>
+
+                    <p>
+                        تأكد من أن الرابط صحيح.
+                    </p>
+
                 </div>
             `;
 
@@ -95,9 +112,13 @@ async function loadCV() {
         }
 
 
-        const cv = cvSnap.data();
+        const cv =
+            cvSnap.data();
 
-        const personal = cv.personal || {};
+
+        const personal =
+            cv.personal || {};
+
 
         const education =
             Array.isArray(cv.education)
@@ -106,12 +127,14 @@ async function loadCV() {
                     ? [cv.education]
                     : [];
 
+
         const experience =
             Array.isArray(cv.experience)
                 ? cv.experience
                 : cv.experience
                     ? [cv.experience]
                     : [];
+
 
         const projects =
             Array.isArray(cv.projects)
@@ -120,15 +143,18 @@ async function loadCV() {
                     ? [cv.project]
                     : [];
 
+
         const skills =
             Array.isArray(cv.skills)
                 ? cv.skills
                 : [];
 
+
         const languages =
             Array.isArray(cv.languages)
                 ? cv.languages
                 : [];
+
 
         const certificates =
             Array.isArray(cv.certificates)
@@ -148,27 +174,30 @@ async function loadCV() {
             safeUrl(personal.photo);
 
 
-        const photoHTML = photoUrl
+        const photoHTML =
+            photoUrl
 
-            ? `
-                <img
-                    src="${photoUrl}"
-                    class="profile-photo"
-                    alt="الصورة الشخصية"
-                >
-            `
+                ? `
+                    <img
+                        src="${photoUrl}"
+                        class="profile-photo"
+                        alt="الصورة الشخصية"
+                    >
+                `
 
-            : `
-                <div class="profile-placeholder">
-                    ${
-                        personal.name
-                            ? escapeHtml(
-                                personal.name.charAt(0)
-                            )
-                            : "CV"
-                    }
-                </div>
-            `;
+                : `
+                    <div class="profile-placeholder">
+
+                        ${
+                            personal.name
+                                ? escapeHtml(
+                                    personal.name.charAt(0)
+                                )
+                                : "CV"
+                        }
+
+                    </div>
+                `;
 
 
         // ==============================
@@ -178,13 +207,19 @@ async function loadCV() {
         const skillsHTML =
             skills.length
 
-                ? skills.map(skill => `
-                    <span class="skill">
-                        ${escapeHtml(skill)}
-                    </span>
-                `).join("")
+                ? skills
+                    .map(skill => `
+                        <span class="skill">
+                            ${escapeHtml(skill)}
+                        </span>
+                    `)
+                    .join("")
 
-                : `<p class="empty">غير متوفر</p>`;
+                : `
+                    <p class="empty">
+                        غير متوفر
+                    </p>
+                `;
 
 
         // ==============================
@@ -194,17 +229,23 @@ async function loadCV() {
         const languagesHTML =
             languages.length
 
-                ? languages.map(language => `
-                    <li>
-                        ${escapeHtml(language)}
-                    </li>
-                `).join("")
+                ? languages
+                    .map(language => `
+                        <li>
+                            ${escapeHtml(language)}
+                        </li>
+                    `)
+                    .join("")
 
-                : `<li>غير متوفر</li>`;
+                : `
+                    <li>
+                        غير متوفر
+                    </li>
+                `;
 
 
         // ==============================
-        // التعليم المتعدد
+        // التعليم
         // ==============================
 
         const educationHTML =
@@ -213,53 +254,70 @@ async function loadCV() {
                 ? `
                     <section class="cv-section">
 
-                        <h2>🎓 التعليم</h2>
+                        <h2>
+                            🎓 التعليم
+                        </h2>
 
-                        ${education.map(item => `
+                        ${education
+                            .map(item => `
 
-                            <div class="timeline-item">
+                                <div class="timeline-item">
 
-                                ${
-                                    item.title
-                                        ? `
-                                            <h3>
-                                                ${escapeHtml(item.title)}
-                                            </h3>
-                                        `
-                                        : ""
-                                }
+                                    ${
+                                        item.title
+                                            ? `
+                                                <h3>
+                                                    ${escapeHtml(
+                                                        item.title
+                                                    )}
+                                                </h3>
+                                            `
+                                            : ""
+                                    }
 
-                                ${
-                                    item.place || item.year
-                                        ? `
-                                            <div class="meta">
 
-                                                ${escapeHtml(item.place)}
+                                    ${
+                                        item.place ||
+                                        item.year
 
-                                                ${
-                                                    item.year
-                                                        ? ` • ${escapeHtml(item.year)}`
-                                                        : ""
-                                                }
+                                            ? `
+                                                <div class="meta">
 
-                                            </div>
-                                        `
-                                        : ""
-                                }
+                                                    ${escapeHtml(
+                                                        item.place
+                                                    )}
 
-                                ${
-                                    item.description
-                                        ? `
-                                            <p>
-                                                ${escapeHtml(item.description)}
-                                            </p>
-                                        `
-                                        : ""
-                                }
+                                                    ${
+                                                        item.year
+                                                            ? ` • ${escapeHtml(
+                                                                item.year
+                                                            )}`
+                                                            : ""
+                                                    }
 
-                            </div>
+                                                </div>
+                                            `
 
-                        `).join("")}
+                                            : ""
+                                    }
+
+
+                                    ${
+                                        item.description
+                                            ? `
+                                                <p>
+                                                    ${escapeHtml(
+                                                        item.description
+                                                    )}
+                                                </p>
+                                            `
+                                            : ""
+                                    }
+
+                                </div>
+
+                            `)
+                            .join("")}
 
                     </section>
                 `
@@ -268,7 +326,7 @@ async function loadCV() {
 
 
         // ==============================
-        // الخبرات المتعددة
+        // الخبرة
         // ==============================
 
         const experienceHTML =
@@ -277,53 +335,70 @@ async function loadCV() {
                 ? `
                     <section class="cv-section">
 
-                        <h2>💼 الخبرة المهنية</h2>
+                        <h2>
+                            💼 الخبرة المهنية
+                        </h2>
 
-                        ${experience.map(item => `
+                        ${experience
+                            .map(item => `
 
-                            <div class="timeline-item">
+                                <div class="timeline-item">
 
-                                ${
-                                    item.job
-                                        ? `
-                                            <h3>
-                                                ${escapeHtml(item.job)}
-                                            </h3>
-                                        `
-                                        : ""
-                                }
+                                    ${
+                                        item.job
+                                            ? `
+                                                <h3>
+                                                    ${escapeHtml(
+                                                        item.job
+                                                    )}
+                                                </h3>
+                                            `
+                                            : ""
+                                    }
 
-                                ${
-                                    item.company || item.period
-                                        ? `
-                                            <div class="meta">
 
-                                                ${escapeHtml(item.company)}
+                                    ${
+                                        item.company ||
+                                        item.period
 
-                                                ${
-                                                    item.period
-                                                        ? ` • ${escapeHtml(item.period)}`
-                                                        : ""
-                                                }
+                                            ? `
+                                                <div class="meta">
 
-                                            </div>
-                                        `
-                                        : ""
-                                }
+                                                    ${escapeHtml(
+                                                        item.company
+                                                    )}
 
-                                ${
-                                    item.description
-                                        ? `
-                                            <p>
-                                                ${escapeHtml(item.description)}
-                                            </p>
-                                        `
-                                        : ""
-                                }
+                                                    ${
+                                                        item.period
+                                                            ? ` • ${escapeHtml(
+                                                                item.period
+                                                            )}`
+                                                            : ""
+                                                    }
 
-                            </div>
+                                                </div>
+                                            `
 
-                        `).join("")}
+                                            : ""
+                                    }
+
+
+                                    ${
+                                        item.description
+                                            ? `
+                                                <p>
+                                                    ${escapeHtml(
+                                                        item.description
+                                                    )}
+                                                </p>
+                                            `
+                                            : ""
+                                    }
+
+                                </div>
+
+                            `)
+                            .join("")}
 
                     </section>
                 `
@@ -332,7 +407,7 @@ async function loadCV() {
 
 
         // ==============================
-        // المشاريع المتعددة
+        // المشاريع
         // ==============================
 
         const projectsHTML =
@@ -341,56 +416,67 @@ async function loadCV() {
                 ? `
                     <section class="cv-section">
 
-                        <h2>📁 المشاريع</h2>
+                        <h2>
+                            📁 المشاريع
+                        </h2>
 
-                        ${projects.map(item => {
+                        ${projects
+                            .map(item => {
 
-                            const link =
-                                safeUrl(item.link);
+                                const link =
+                                    safeUrl(item.link);
 
-                            return `
 
-                                <div class="project-card">
+                                return `
 
-                                    ${
-                                        item.name
-                                            ? `
-                                                <h3>
-                                                    ${escapeHtml(item.name)}
-                                                </h3>
-                                            `
-                                            : ""
-                                    }
+                                    <div class="project-card">
 
-                                    ${
-                                        item.description
-                                            ? `
-                                                <p>
-                                                    ${escapeHtml(item.description)}
-                                                </p>
-                                            `
-                                            : ""
-                                    }
+                                        ${
+                                            item.name
+                                                ? `
+                                                    <h3>
+                                                        ${escapeHtml(
+                                                            item.name
+                                                        )}
+                                                    </h3>
+                                                `
+                                                : ""
+                                        }
 
-                                    ${
-                                        link
-                                            ? `
-                                                <a
-                                                    href="${link}"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    عرض المشروع ↗
-                                                </a>
-                                            `
-                                            : ""
-                                    }
 
-                                </div>
+                                        ${
+                                            item.description
+                                                ? `
+                                                    <p>
+                                                        ${escapeHtml(
+                                                            item.description
+                                                        )}
+                                                    </p>
+                                                `
+                                                : ""
+                                        }
 
-                            `;
 
-                        }).join("")}
+                                        ${
+                                            link
+                                                ? `
+                                                    <a
+                                                        href="${link}"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        عرض المشروع ↗
+                                                    </a>
+                                                `
+                                                : ""
+                                        }
+
+                                    </div>
+
+                                `;
+
+                            })
+                            .join("")}
 
                     </section>
                 `
@@ -399,7 +485,7 @@ async function loadCV() {
 
 
         // ==============================
-        // الشهادات والإنجازات
+        // الشهادات
         // ==============================
 
         const certificatesHTML =
@@ -408,64 +494,80 @@ async function loadCV() {
                 ? `
                     <section class="cv-section">
 
-                        <h2>🏆 الشهادات والإنجازات</h2>
+                        <h2>
+                            🏆 الشهادات والإنجازات
+                        </h2>
 
-                        ${certificates.map(item => {
+                        ${certificates
+                            .map(item => {
 
-                            const link =
-                                safeUrl(item.link);
+                                const link =
+                                    safeUrl(item.link);
 
-                            return `
 
-                                <div class="timeline-item">
+                                return `
 
-                                    ${
-                                        item.name
-                                            ? `
-                                                <h3>
-                                                    ${escapeHtml(item.name)}
-                                                </h3>
-                                            `
-                                            : ""
-                                    }
+                                    <div class="timeline-item">
 
-                                    ${
-                                        item.issuer || item.year
-                                            ? `
-                                                <div class="meta">
+                                        ${
+                                            item.name
+                                                ? `
+                                                    <h3>
+                                                        ${escapeHtml(
+                                                            item.name
+                                                        )}
+                                                    </h3>
+                                                `
+                                                : ""
+                                        }
 
-                                                    ${escapeHtml(item.issuer)}
 
-                                                    ${
-                                                        item.year
-                                                            ? ` • ${escapeHtml(item.year)}`
-                                                            : ""
-                                                    }
+                                        ${
+                                            item.issuer ||
+                                            item.year
 
-                                                </div>
-                                            `
-                                            : ""
-                                    }
+                                                ? `
+                                                    <div class="meta">
 
-                                    ${
-                                        link
-                                            ? `
-                                                <a
-                                                    href="${link}"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    عرض الشهادة ↗
-                                                </a>
-                                            `
-                                            : ""
-                                    }
+                                                        ${escapeHtml(
+                                                            item.issuer
+                                                        )}
 
-                                </div>
+                                                        ${
+                                                            item.year
+                                                                ? ` • ${escapeHtml(
+                                                                    item.year
+                                                                )}`
+                                                                : ""
+                                                        }
 
-                            `;
+                                                    </div>
+                                                `
 
-                        }).join("")}
+                                                : ""
+                                        }
+
+
+                                        ${
+                                            link
+                                                ? `
+                                                    <a
+                                                        href="${link}"
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        عرض الشهادة ↗
+                                                    </a>
+                                                `
+                                                : ""
+                                        }
+
+                                    </div>
+
+                                `;
+
+                            })
+                            .join("")}
 
                     </section>
                 `
@@ -484,13 +586,20 @@ async function loadCV() {
 
             contactHTML += `
                 <a
-                    href="mailto:${escapeHtml(personal.email)}"
+                    href="mailto:${escapeHtml(
+                        personal.email
+                    )}"
                     class="contact-item"
                 >
+
                     ✉️
+
                     <span>
-                        ${escapeHtml(personal.email)}
+                        ${escapeHtml(
+                            personal.email
+                        )}
                     </span>
+
                 </a>
             `;
 
@@ -501,13 +610,20 @@ async function loadCV() {
 
             contactHTML += `
                 <a
-                    href="tel:${escapeHtml(personal.phone)}"
+                    href="tel:${escapeHtml(
+                        personal.phone
+                    )}"
                     class="contact-item"
                 >
+
                     📞
+
                     <span>
-                        ${escapeHtml(personal.phone)}
+                        ${escapeHtml(
+                            personal.phone
+                        )}
                     </span>
+
                 </a>
             `;
 
@@ -518,10 +634,15 @@ async function loadCV() {
 
             contactHTML += `
                 <div class="contact-item">
+
                     📍
+
                     <span>
-                        ${escapeHtml(personal.location)}
+                        ${escapeHtml(
+                            personal.location
+                        )}
                     </span>
+
                 </div>
             `;
 
@@ -533,6 +654,7 @@ async function loadCV() {
             const url =
                 safeUrl(personal.linkedin);
 
+
             if (url) {
 
                 contactHTML += `
@@ -542,8 +664,13 @@ async function loadCV() {
                         rel="noopener noreferrer"
                         class="contact-item"
                     >
+
                         in
-                        <span>LinkedIn</span>
+
+                        <span>
+                            LinkedIn
+                        </span>
+
                     </a>
                 `;
 
@@ -557,6 +684,7 @@ async function loadCV() {
             const url =
                 safeUrl(personal.github);
 
+
             if (url) {
 
                 contactHTML += `
@@ -566,8 +694,13 @@ async function loadCV() {
                         rel="noopener noreferrer"
                         class="contact-item"
                     >
+
                         ◉
-                        <span>GitHub</span>
+
+                        <span>
+                            GitHub
+                        </span>
+
                     </a>
                 `;
 
@@ -581,141 +714,9 @@ async function loadCV() {
             const url =
                 safeUrl(personal.portfolio);
 
+
             if (url) {
 
                 contactHTML += `
                     <a
-                        href="${url}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="contact-item"
-                    >
-                        🌐
-                        <span>الموقع الشخصي</span>
-                    </a>
-                `;
-
-            }
-
-        }
-
-
-        // ==============================
-        // عرض الـCV
-        // ==============================
-
-        appElement.innerHTML = `
-
-            <div class="cv-wrapper">
-
-
-                <header class="cv-header">
-
-                    ${photoHTML}
-
-                    <div class="profile-info">
-
-                        <h1>
-                            ${escapeHtml(
-                                personal.name ||
-                                "بدون اسم"
-                            )}
-                        </h1>
-
-                        ${
-                            personal.jobTitle
-                                ? `
-                                    <h2>
-                                        ${escapeHtml(
-                                            personal.jobTitle
-                                        )}
-                                    </h2>
-                                `
-                                : ""
-                        }
-
-                    </div>
-
-                </header>
-
-
-                <div class="cv-content">
-
-
-                    <aside class="cv-sidebar">
-
-
-                        ${
-                            contactHTML
-                                ? `
-                                    <section class="side-section">
-
-                                        <h3>
-                                            معلومات التواصل
-                                        </h3>
-
-                                        ${contactHTML}
-
-                                    </section>
-                                `
-                                : ""
-                        }
-
-
-                        <section class="side-section">
-
-                            <h3>
-                                المهارات
-                            </h3>
-
-                            <div class="skills">
-                                ${skillsHTML}
-                            </div>
-
-                        </section>
-
-
-                        ${
-                            languages.length
-                                ? `
-                                    <section class="side-section">
-
-                                        <h3>
-                                            اللغات
-                                        </h3>
-
-                                        <ul class="languages">
-                                            ${languagesHTML}
-                                        </ul>
-
-                                    </section>
-                                `
-                                : ""
-                        }
-
-
-                    </aside>
-
-
-                    <section class="cv-main">
-
-
-                        ${
-                            personal.about
-                                ? `
-                                    <section class="cv-section">
-
-                                        <h2>
-                                            نبذة عني
-                                        </h2>
-
-                                        <p>
-                                            ${escapeHtml(
-                                                personal.about
-                                            )}
-                                        </p>
-
-                                    </section>
-                                `
-                                : ""
-     
+                        href="$
