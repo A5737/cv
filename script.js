@@ -7,10 +7,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 
-// ==========================================
-// Firebase
-// ==========================================
-
 const firebaseConfig = {
     apiKey: "AIzaSyDJKre7sGcKRSD-VyULGyBLVfc98B3lj3Y",
     authDomain: "cv-proj-419e6.firebaseapp.com",
@@ -20,21 +16,12 @@ const firebaseConfig = {
     appId: "1:1043294028225:web:9f36e80b18d9127a3aef40"
 };
 
-const app = initializeApp(firebaseConfig);
 
-const db = getFirestore(app);
-
-
-// ==========================================
-// عناصر الصفحة
-// ==========================================
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
 
 const appElement = document.getElementById("app");
 
-
-// ==========================================
-// حماية النصوص من HTML
-// ==========================================
 
 function escapeHTML(value) {
 
@@ -48,15 +35,10 @@ function escapeHTML(value) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-
 }
 
 
-// ==========================================
-// رابط آمن
-// ==========================================
-
-function safeURL(url) {
+function getURL(url) {
 
     if (!url) {
         return "";
@@ -64,13 +46,13 @@ function safeURL(url) {
 
     try {
 
-        const parsed = new URL(url);
+        const test = new URL(url);
 
         if (
-            parsed.protocol === "http:" ||
-            parsed.protocol === "https:"
+            test.protocol === "https:" ||
+            test.protocol === "http:"
         ) {
-            return parsed.href;
+            return test.href;
         }
 
     } catch (error) {
@@ -78,33 +60,31 @@ function safeURL(url) {
     }
 
     return "";
+}
 
+
+function text(value) {
+    return escapeHTML(value || "");
 }
 
 
 // ==========================================
-// قراءة ID من الرابط
+// قراءة ID
 // ==========================================
 
-const params = new URLSearchParams(
+const urlParams = new URLSearchParams(
     window.location.search
 );
 
-const cvId = params.get("id");
+const cvId = urlParams.get("id");
 
-
-// ==========================================
-// إذا لا يوجد ID
-// ==========================================
 
 if (!cvId) {
 
     appElement.innerHTML = `
         <div class="message-box">
-            <h1>السيرة الذاتية غير موجودة</h1>
-            <p>
-                رابط الـCV غير صحيح أو لا يحتوي على ID.
-            </p>
+            <h1>السيرة الذاتية غير محددة</h1>
+            <p>الرابط لا يحتوي على ID صحيح.</p>
         </div>
     `;
 
@@ -121,13 +101,17 @@ if (!cvId) {
 
 async function loadCV() {
 
-    appElement.innerHTML = `
-        <div class="loading">
-            جاري تحميل السيرة الذاتية...
-        </div>
-    `;
-
     try {
+
+        appElement.innerHTML = `
+            <div class="loading">
+                جاري تحميل السيرة الذاتية...
+            </div>
+        `;
+
+
+        console.log("CV ID:", cvId);
+
 
         const cvRef = doc(
             db,
@@ -135,17 +119,26 @@ async function loadCV() {
             cvId
         );
 
-        const cvSnapshot =
-            await getDoc(cvRef);
+
+        console.log("Firestore document:", cvRef);
 
 
-        if (!cvSnapshot.exists()) {
+        const snapshot = await getDoc(cvRef);
+
+
+        console.log("CV snapshot received");
+
+
+        if (!snapshot.exists()) {
 
             appElement.innerHTML = `
                 <div class="message-box">
                     <h1>السيرة الذاتية غير موجودة</h1>
                     <p>
-                        لم يتم العثور على هذه السيرة الذاتية.
+                        لم نجد CV بهذا الـID:
+                    </p>
+                    <p>
+                        ${text(cvId)}
                     </p>
                 </div>
             `;
@@ -154,8 +147,9 @@ async function loadCV() {
         }
 
 
-        const data =
-            cvSnapshot.data();
+        const data = snapshot.data();
+
+        console.log("CV data:", data);
 
 
         renderCV(data);
@@ -163,14 +157,25 @@ async function loadCV() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error("CV ERROR:", error);
+
 
         appElement.innerHTML = `
             <div class="message-box">
-                <h1>حدث خطأ</h1>
+
+                <h1>حدث خطأ أثناء تحميل الـCV</h1>
+
                 <p>
-                    تعذر تحميل السيرة الذاتية.
+                    ${text(error.message)}
                 </p>
+
+                <br>
+
+                <p>
+                    Error code:
+                    ${text(error.code)}
+                </p>
+
             </div>
         `;
 
@@ -185,42 +190,31 @@ async function loadCV() {
 
 function renderCV(data) {
 
-    const personal =
-        data.personal || {};
+    const personal = data.personal || {};
 
-    const education =
-        Array.isArray(data.education)
-            ? data.education
-            : [];
+    const education = Array.isArray(data.education)
+        ? data.education
+        : [];
 
-    const skills =
-        Array.isArray(data.skills)
-            ? data.skills
-            : [];
+    const skills = Array.isArray(data.skills)
+        ? data.skills
+        : [];
 
-    const experience =
-        Array.isArray(data.experience)
-            ? data.experience
-            : [];
+    const experience = Array.isArray(data.experience)
+        ? data.experience
+        : [];
 
-    const projects =
-        Array.isArray(data.projects)
-            ? data.projects
-            : [];
+    const projects = Array.isArray(data.projects)
+        ? data.projects
+        : [];
 
-    const languages =
-        Array.isArray(data.languages)
-            ? data.languages
-            : [];
+    const languages = Array.isArray(data.languages)
+        ? data.languages
+        : [];
 
-    const certificates =
-        Array.isArray(data.certificates)
-            ? data.certificates
-            : [];
-
-
-    const photoURL =
-        safeURL(personal.photo);
+    const certificates = Array.isArray(data.certificates)
+        ? data.certificates
+        : [];
 
 
     let html = `
@@ -228,38 +222,35 @@ function renderCV(data) {
         <div class="cv-wrapper">
 
             <header class="cv-header">
-
     `;
 
 
-    // ======================================
     // الصورة
-    // ======================================
 
-    if (photoURL) {
+    const photo = getURL(personal.photo);
+
+
+    if (photo) {
 
         html += `
-
                 <img
                     class="profile-photo"
-                    src="${escapeHTML(photoURL)}"
+                    src="${text(photo)}"
                     alt="الصورة الشخصية"
                 >
-
         `;
 
     } else {
 
+        const firstLetter =
+            personal.name
+                ? personal.name.charAt(0)
+                : "CV";
+
         html += `
-
                 <div class="profile-placeholder">
-                    ${escapeHTML(
-                        personal.name
-                            ? personal.name.charAt(0)
-                            : "CV"
-                    )}
+                    ${text(firstLetter)}
                 </div>
-
         `;
 
     }
@@ -270,22 +261,24 @@ function renderCV(data) {
                 <div class="profile-info">
 
                     <h1>
-                        ${escapeHTML(
-                            personal.name || ""
-                        )}
+                        ${text(personal.name)}
                     </h1>
 
-                    ${
-                        personal.jobTitle
-                            ? `
-                                <h2>
-                                    ${escapeHTML(
-                                        personal.jobTitle
-                                    )}
-                                </h2>
-                            `
-                            : ""
-                    }
+    `;
+
+
+    if (personal.jobTitle) {
+
+        html += `
+                    <h2>
+                        ${text(personal.jobTitle)}
+                    </h2>
+        `;
+
+    }
+
+
+    html += `
 
                 </div>
 
@@ -298,13 +291,13 @@ function renderCV(data) {
     `;
 
 
-    // ======================================
-    // معلومات الاتصال
-    // ======================================
+    // ==========================================
+    // معلومات التواصل
+    // ==========================================
 
     if (
-        personal.email ||
         personal.phone ||
+        personal.email ||
         personal.location ||
         personal.birthDate ||
         personal.instagram ||
@@ -328,15 +321,11 @@ function renderCV(data) {
 
                         <a
                             class="contact-item"
-                            href="tel:${escapeHTML(
-                                personal.phone
-                            )}"
+                            href="tel:${text(personal.phone)}"
                         >
                             <span>📞</span>
                             <span>
-                                ${escapeHTML(
-                                    personal.phone
-                                )}
+                                ${text(personal.phone)}
                             </span>
                         </a>
 
@@ -351,15 +340,11 @@ function renderCV(data) {
 
                         <a
                             class="contact-item"
-                            href="mailto:${escapeHTML(
-                                personal.email
-                            )}"
+                            href="mailto:${text(personal.email)}"
                         >
                             <span>✉️</span>
                             <span>
-                                ${escapeHTML(
-                                    personal.email
-                                )}
+                                ${text(personal.email)}
                             </span>
                         </a>
 
@@ -373,11 +358,7 @@ function renderCV(data) {
             html += `
 
                         <div class="contact-item">
-                            <span>
-                                ${escapeHTML(
-                                    personal.location
-                                )}
-                            </span>
+                            ${text(personal.location)}
                         </div>
 
             `;
@@ -390,12 +371,8 @@ function renderCV(data) {
             html += `
 
                         <div class="contact-item">
-                            <span>
-                                تاريخ الميلاد:
-                                ${escapeHTML(
-                                    personal.birthDate
-                                )}
-                            </span>
+                            تاريخ الميلاد:
+                            ${text(personal.birthDate)}
                         </div>
 
             `;
@@ -403,24 +380,21 @@ function renderCV(data) {
         }
 
 
-        const instagramURL =
-            safeURL(personal.instagram);
+        const instagram =
+            getURL(personal.instagram);
 
-        if (instagramURL) {
+
+        if (instagram) {
 
             html += `
 
                         <a
                             class="contact-item"
-                            href="${escapeHTML(
-                                instagramURL
-                            )}"
+                            href="${text(instagram)}"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            <span>
-                                Instagram
-                            </span>
+                            Instagram
                         </a>
 
             `;
@@ -428,24 +402,21 @@ function renderCV(data) {
         }
 
 
-        const telegramURL =
-            safeURL(personal.telegram);
+        const telegram =
+            getURL(personal.telegram);
 
-        if (telegramURL) {
+
+        if (telegram) {
 
             html += `
 
                         <a
                             class="contact-item"
-                            href="${escapeHTML(
-                                telegramURL
-                            )}"
+                            href="${text(telegram)}"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            <span>
-                                Telegram
-                            </span>
+                            Telegram
                         </a>
 
             `;
@@ -462,11 +433,11 @@ function renderCV(data) {
     }
 
 
-    // ======================================
+    // ==========================================
     // المهارات
-    // ======================================
+    // ==========================================
 
-    if (skills.length > 0) {
+    if (skills.length) {
 
         html += `
 
@@ -484,11 +455,9 @@ function renderCV(data) {
         skills.forEach(skill => {
 
             html += `
-
                             <span class="skill">
-                                ${escapeHTML(skill)}
+                                ${text(skill)}
                             </span>
-
             `;
 
         });
@@ -505,11 +474,11 @@ function renderCV(data) {
     }
 
 
-    // ======================================
+    // ==========================================
     // اللغات
-    // ======================================
+    // ==========================================
 
-    if (languages.length > 0) {
+    if (languages.length) {
 
         html += `
 
@@ -527,11 +496,9 @@ function renderCV(data) {
         languages.forEach(language => {
 
             html += `
-
                             <li>
-                                ${escapeHTML(language)}
+                                ${text(language)}
                             </li>
-
             `;
 
         });
@@ -557,9 +524,9 @@ function renderCV(data) {
     `;
 
 
-    // ======================================
+    // ==========================================
     // نبذة
-    // ======================================
+    // ==========================================
 
     if (personal.about) {
 
@@ -572,9 +539,7 @@ function renderCV(data) {
                         </h2>
 
                         <p>
-                            ${escapeHTML(
-                                personal.about
-                            )}
+                            ${text(personal.about)}
                         </p>
 
                     </section>
@@ -584,11 +549,11 @@ function renderCV(data) {
     }
 
 
-    // ======================================
+    // ==========================================
     // التعليم
-    // ======================================
+    // ==========================================
 
-    if (education.length > 0) {
+    if (education.length) {
 
         html += `
 
@@ -607,221 +572,47 @@ function renderCV(data) {
 
                         <div class="timeline-item">
 
-                            ${
-                                item.title
-                                    ? `
-                                        <h3>
-                                            ${escapeHTML(
-                                                item.title
-                                            )}
-                                        </h3>
-                                    `
-                                    : ""
-                            }
-
-                            ${
-                                item.place ||
-                                item.year
-                                    ? `
-                                        <div class="meta">
-                                            ${escapeHTML(
-                                                item.place || ""
-                                            )}
-                                            ${
-                                                item.place &&
-                                                item.year
-                                                    ? " — "
-                                                    : ""
-                                            }
-                                            ${escapeHTML(
-                                                item.year || ""
-                                            )}
-                                        </div>
-                                    `
-                                    : ""
-                            }
-
-                            ${
-                                item.description
-                                    ? `
-                                        <p>
-                                            ${escapeHTML(
-                                                item.description
-                                            )}
-                                        </p>
-                                    `
-                                    : ""
-                            }
-
-                        </div>
-
-            `;
-
-        });
-
-
-        html += `
-
-                    </section>
-
-        `;
-
-    }
-
-
-    // ======================================
-    // الخبرة
-    // ======================================
-
-    if (experience.length > 0) {
-
-        html += `
-
-                    <section class="cv-section">
-
-                        <h2>
-                            الخبرة المهنية
-                        </h2>
-
-        `;
-
-
-        experience.forEach(item => {
-
-            html += `
-
-                        <div class="timeline-item">
-
-                            ${
-                                item.job
-                                    ? `
-                                        <h3>
-                                            ${escapeHTML(
-                                                item.job
-                                            )}
-                                        </h3>
-                                    `
-                                    : ""
-                            }
-
-                            ${
-                                item.company ||
-                                item.period
-                                    ? `
-                                        <div class="meta">
-                                            ${escapeHTML(
-                                                item.company || ""
-                                            )}
-                                            ${
-                                                item.company &&
-                                                item.period
-                                                    ? " — "
-                                                    : ""
-                                            }
-                                            ${escapeHTML(
-                                                item.period || ""
-                                            )}
-                                        </div>
-                                    `
-                                    : ""
-                            }
-
-                            ${
-                                item.description
-                                    ? `
-                                        <p>
-                                            ${escapeHTML(
-                                                item.description
-                                            )}
-                                        </p>
-                                    `
-                                    : ""
-                            }
-
-                        </div>
-
-            `;
-
-        });
-
-
-        html += `
-
-                    </section>
-
-        `;
-
-    }
-
-
-    // ======================================
-    // المشاريع
-    // ======================================
-
-    if (projects.length > 0) {
-
-        html += `
-
-                    <section class="cv-section">
-
-                        <h2>
-                            المشاريع
-                        </h2>
-
-        `;
-
-
-        projects.forEach(item => {
-
-            html += `
-
-                        <div class="project-card">
-
-                            ${
-                                item.name
-                                    ? `
-                                        <h3>
-                                            ${escapeHTML(
-                                                item.name
-                                            )}
-                                        </h3>
-                                    `
-                                    : ""
-                            }
-
-                            ${
-                                item.description
-                                    ? `
-                                        <p>
-                                            ${escapeHTML(
-                                                item.description
-                                            )}
-                                        </p>
-                                    `
-                                    : ""
-                            }
-
             `;
 
 
-            const projectURL =
-                safeURL(item.link);
-
-
-            if (projectURL) {
+            if (item.title) {
 
                 html += `
+                            <h3>
+                                ${text(item.title)}
+                            </h3>
+                `;
 
-                            <a
-                                href="${escapeHTML(
-                                    projectURL
-                                )}"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                عرض المشروع
-                            </a>
+            }
 
+
+            if (item.place || item.year) {
+
+                html += `
+                            <div class="meta">
+
+                                ${text(item.place)}
+
+                                ${
+                                    item.place && item.year
+                                        ? " — "
+                                        : ""
+                                }
+
+                                ${text(item.year)}
+
+                            </div>
+                `;
+
+            }
+
+
+            if (item.description) {
+
+                html += `
+                            <p>
+                                ${text(item.description)}
+                            </p>
                 `;
 
             }
@@ -845,11 +636,183 @@ function renderCV(data) {
     }
 
 
-    // ======================================
-    // الشهادات والإنجازات
-    // ======================================
+    // ==========================================
+    // الخبرة
+    // ==========================================
 
-    if (certificates.length > 0) {
+    if (experience.length) {
+
+        html += `
+
+                    <section class="cv-section">
+
+                        <h2>
+                            الخبرة المهنية
+                        </h2>
+
+        `;
+
+
+        experience.forEach(item => {
+
+            html += `
+
+                        <div class="timeline-item">
+
+            `;
+
+
+            if (item.job) {
+
+                html += `
+                            <h3>
+                                ${text(item.job)}
+                            </h3>
+                `;
+
+            }
+
+
+            if (item.company || item.period) {
+
+                html += `
+                            <div class="meta">
+
+                                ${text(item.company)}
+
+                                ${
+                                    item.company && item.period
+                                        ? " — "
+                                        : ""
+                                }
+
+                                ${text(item.period)}
+
+                            </div>
+                `;
+
+            }
+
+
+            if (item.description) {
+
+                html += `
+                            <p>
+                                ${text(item.description)}
+                            </p>
+                `;
+
+            }
+
+
+            html += `
+
+                        </div>
+
+            `;
+
+        });
+
+
+        html += `
+
+                    </section>
+
+        `;
+
+    }
+
+
+    // ==========================================
+    // المشاريع
+    // ==========================================
+
+    if (projects.length) {
+
+        html += `
+
+                    <section class="cv-section">
+
+                        <h2>
+                            المشاريع
+                        </h2>
+
+        `;
+
+
+        projects.forEach(item => {
+
+            html += `
+
+                        <div class="project-card">
+
+            `;
+
+
+            if (item.name) {
+
+                html += `
+                            <h3>
+                                ${text(item.name)}
+                            </h3>
+                `;
+
+            }
+
+
+            if (item.description) {
+
+                html += `
+                            <p>
+                                ${text(item.description)}
+                            </p>
+                `;
+
+            }
+
+
+            const projectURL =
+                getURL(item.link);
+
+
+            if (projectURL) {
+
+                html += `
+                            <a
+                                href="${text(projectURL)}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                عرض المشروع
+                            </a>
+                `;
+
+            }
+
+
+            html += `
+
+                        </div>
+
+            `;
+
+        });
+
+
+        html += `
+
+                    </section>
+
+        `;
+
+    }
+
+
+    // ==========================================
+    // الشهادات
+    // ==========================================
+
+    if (certificates.length) {
 
         html += `
 
@@ -868,19 +831,105 @@ function renderCV(data) {
 
                         <div class="timeline-item">
 
-                            ${
-                                item.name
-                                    ? `
-                                        <h3>
-                                            ${escapeHTML(
-                                                item.name
-                                            )}
-                                        </h3>
-                                    `
-                                    : ""
-                            }
+            `;
 
-                            ${
-                                item.issuer ||
-                                item.year
-                       
+
+            if (item.name) {
+
+                html += `
+                            <h3>
+                                ${text(item.name)}
+                            </h3>
+                `;
+
+            }
+
+
+            if (item.issuer || item.year) {
+
+                html += `
+                            <div class="meta">
+
+                                ${text(item.issuer)}
+
+                                ${
+                                    item.issuer && item.year
+                                        ? " — "
+                                        : ""
+                                }
+
+                                ${text(item.year)}
+
+                            </div>
+                `;
+
+            }
+
+
+            const certificateURL =
+                getURL(item.link);
+
+
+            if (certificateURL) {
+
+                html += `
+                            <a
+                                href="${text(certificateURL)}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                عرض الشهادة
+                            </a>
+                `;
+
+            }
+
+
+            html += `
+
+                        </div>
+
+            `;
+
+        });
+
+
+        html += `
+
+                    </section>
+
+        `;
+
+    }
+
+
+    // ==========================================
+    // زر الطباعة
+    // ==========================================
+
+    html += `
+
+                    <div class="cv-actions">
+
+                        <button
+                            class="print-button"
+                            type="button"
+                            onclick="window.print()"
+                        >
+                            طباعة / حفظ PDF
+                        </button>
+
+                    </div>
+
+                </main>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    appElement.innerHTML = html;
+
+}
